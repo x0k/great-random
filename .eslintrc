@@ -1,0 +1,3 @@
+{
+  "extends": ["react-app", "eslint-config-x0k"]
+}
