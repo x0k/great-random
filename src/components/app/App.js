@@ -114,6 +114,7 @@ class App extends Component {
   handleCheck = name => (event, value) => {
     this.setState((state, props) => {
       state.checkboxes[name].value = value;
+      console.log(state.checkboxes);
       return state;
     });
   }
@@ -133,9 +134,9 @@ class App extends Component {
       relation = {};// name - task[]
     names = names.split('\n');
     tasks = tasks.split('\n');
-    if (shuffleNames)
+    if (shuffleNames.value)
       names = shuffle(names);
-    if (shuffleTasks)
+    if (shuffleTasks.value)
       tasks = shuffle(tasks);
     for (let name of names)
       relation[name] = [];
@@ -147,7 +148,7 @@ class App extends Component {
     this.setState({
       error: false,
       results: { names, answers, relation }
-    });    
+    });
   }
 
   render() {
@@ -261,16 +262,16 @@ class App extends Component {
                 <TableHead>
                   <TableRow>
                     <TableCell>Исполнитель</TableCell>
-                    <TableCell align="left">Задания</TableCell>
-                    <TableCell align="right">Количество</TableCell>
+                    <TableCell>Задания</TableCell>
+                    <TableCell>Количество</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {results.names.map((name, id) =>(
                     <TableRow key={id}>
                       <TableCell component="th" scope="row">{name}</TableCell>
-                      <TableCell align="left">{results.relation[name].join(', ')}</TableCell>
-                      <TableCell align="right">{results.relation[name].length}</TableCell>
+                      <TableCell>{results.relation[name].join(', ')}</TableCell>
+                      <TableCell>{results.relation[name].length}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -280,16 +281,16 @@ class App extends Component {
                 <TableHead>
                   <TableRow>
                     {addNumbers && <TableCell>Номер</TableCell>}
-                    <TableCell align="left">Задание</TableCell>
-                    <TableCell align="left">Исполнитель</TableCell>
+                    <TableCell>Задание</TableCell>
+                    <TableCell>Исполнитель</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {results.answers.map((answer, id) =>(
                     <TableRow key={id}>
                       {addNumbers && <TableCell>{id + 1}</TableCell>}
-                      <TableCell align="left">{answer.task}</TableCell>
-                      <TableCell align="left">{answer.name}</TableCell>
+                      <TableCell>{answer.task}</TableCell>
+                      <TableCell>{answer.name}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
