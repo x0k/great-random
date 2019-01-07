@@ -7,6 +7,7 @@ import Grid from '@material-ui/core/Grid';
 import FormLabel from '@material-ui/core/FormLabel';
 import FormControl from '@material-ui/core/FormControl';
 
+import GridItem from './gridItem';
 import Button from './button';
 import Textarea from './textarea';
 import RadioGroup from './radioGroup';
@@ -78,7 +79,7 @@ class App extends Component {
   state = {
     checkboxes: {
       addNumbers: {
-        label: 'Add task numbers',
+        label: 'Show task numbers',
         value: true,
       },
     },
@@ -159,93 +160,77 @@ class App extends Component {
           </Toolbar>
         </AppBar>
         <Grid container>
-          <Grid item xs={3}>
-            <div className={classes.container}>
-              <Textarea
-                label="Members"
-                value={this.state.names}
-                onChange={this.handleChange('names')}
+          <GridItem size={3}>
+            <Textarea
+              label="Members"
+              value={this.state.names}
+              onChange={this.handleChange('names')}
+            />
+          </GridItem>
+          <GridItem size={9}>
+            <Textarea
+              label="Tasks"
+              value={this.state.tasks}
+              onChange={this.handleChange('tasks')}
+            />
+          </GridItem>
+          <GridItem size={3}>
+            <Button primary onClick={this.handleDistribute}>
+              Distribute
+            </Button>
+            <Button onClick={this.handleShuffle('names')}>
+              Shuffle members
+            </Button>
+            <Button onClick={this.handleShuffle('tasks')}>
+              Shuffle tasks
+            </Button>
+          </GridItem>
+          <GridItem size={3}>
+            <FormControl component="fieldset">
+              <FormLabel component="legend">Distribution type</FormLabel>
+              <RadioGroup
+                label="DistributionType"
+                name="distributionType"
+                value={this.state.distributionType}
+                onChange={this.handleChange('distributionType')}
+                items={distributionTypes}
               />
-            </div>
-          </Grid>
-          <Grid item xs={9}>
-            <div className={classes.container}>
-              <Textarea
-                label="Tasks"
-                value={this.state.tasks}
-                onChange={this.handleChange('tasks')}
-              />
-            </div>
-          </Grid>
-          <Grid item xs={3}>
-            <div className={classes.container}>
-              <Button primary onClick={this.handleDistribute}>
-                Distribute
-              </Button>
-              <Button onClick={this.handleShuffle('names')}>
-                Shuffle members
-              </Button>
-              <Button onClick={this.handleShuffle('tasks')}>
-                Shuffle tasks
-              </Button>
-            </div>
-          </Grid>
-          <Grid item xs={3}>
-            <div className={classes.container}>
-              <FormControl component="fieldset">
-                <FormLabel component="legend">Distribution type</FormLabel>
-                <RadioGroup
-                  label="DistributionType"
-                  name="distributionType"
-                  value={this.state.distributionType}
-                  onChange={this.handleChange('distributionType')}
-                  items={distributionTypes}
-                />
-              </FormControl>
-            </div>
-          </Grid>
-          <Grid item xs={3}>
-            <div className={classes.container}>
-              <FormControl component="fieldset">
-                <FormLabel component="legend">Parameters</FormLabel>
-                <Typography variant="body1" style={{ padding: 12, paddingLeft: 0 }}>
-                  No parameters
-                </Typography>
-              </FormControl>
-            </div>
-          </Grid>
-          <Grid item xs={3}>
-            <div className={classes.container}>
-              <FormControl component="fieldset" className={classes.formControl}>
-                <FormLabel component="legend">Options:</FormLabel>
-                <CheckboxGroup
-                  items={checkboxes}
-                  onChange={this.handleCheck}
-                />
-              </FormControl>
-            </div>
-          </Grid>
-          {error &&<Grid item xs={12}>
-            <div className={classes.container}>
-              <Typography variant="h6" color="inherit">
-                Error
+            </FormControl>
+          </GridItem>
+          <GridItem size={3}>
+            <FormControl component="fieldset">
+              <FormLabel component="legend">Parameters</FormLabel>
+              <Typography variant="body1" style={{ padding: 12, paddingLeft: 0 }}>
+                No parameters
               </Typography>
-            </div>
-          </Grid>}
-          {results && <Grid item xs={12}>
-            <div className={classes.container}>
-              <Typography variant="h6" color="inherit">Short</Typography>
-              <ShortTable
-                names={results.names}
-                relation={results.relation}
+            </FormControl>
+          </GridItem>
+          <GridItem size={3}>
+            <FormControl component="fieldset" className={classes.formControl}>
+              <FormLabel component="legend">Options:</FormLabel>
+              <CheckboxGroup
+                items={checkboxes}
+                onChange={this.handleCheck}
               />
-              <Typography variant="h6" color="inherit" style={{ marginTop: 20 }}>Details</Typography>
-              <DetailTable
-                addNumbers={addNumbers}
-                answers={results.answers}
-              />
-            </div>
-          </Grid>}
+            </FormControl>
+          </GridItem>
+          {error && <GridItem size={12}>
+            <Typography variant="h6" color="inherit">
+              Error
+            </Typography>
+          </GridItem>}
+          {results && <GridItem size={12}>
+            <Typography variant="h6" color="inherit">Short</Typography>
+            <ShortTable
+              names={results.names}
+              relation={results.relation}
+            />
+            <Typography variant="h6" color="inherit" style={{ marginTop: 20 }}>Details</Typography>
+            <DetailTable
+              addNumbers={addNumbers}
+              answers={results.answers}
+            />
+          </GridItem>}
         </Grid>
       </div>
     );
