@@ -22,9 +22,10 @@ import TableRow from '@material-ui/core/TableRow';
 const styles = {
   button: {
     width: '100%',
+    marginBottom: 10,
   },
   container: {
-    margin: 10,
+    padding: 20,
   }
 };
 
@@ -86,16 +87,8 @@ class App extends Component {
   state = {
     checkboxes: {
       addNumbers: {
-        label: 'Добавлять номера заданий',
+        label: 'Add task numbers',
         value: true,
-      },
-      shuffleNames: {
-        label: 'Перемешать имена',
-        value: true,
-      },
-      shuffleTasks: {
-        label: 'Перемешать задания',
-        value: false,
       },
     },
     names: '',
@@ -128,16 +121,11 @@ class App extends Component {
   }
 
   handleDistribute = event => {
-    let { names, tasks, checkboxes, distributionType } = this.state,
-      { shuffleNames, shuffleTasks } = checkboxes,
+    let { names, tasks, distributionType } = this.state,
       answers = [],
       relation = {};// name - task[]
     names = names.split('\n');
     tasks = tasks.split('\n');
-    if (shuffleNames.value)
-      names = shuffle(names);
-    if (shuffleTasks.value)
-      tasks = shuffle(tasks);
     for (let name of names)
       relation[name] = [];
     if (names.length < 2 || tasks.length < 2) {
@@ -162,19 +150,19 @@ class App extends Component {
         <AppBar position="static" color="default">
           <Toolbar>
             <Typography variant="h6" color="inherit">
-              Великий Рандом
+              Great random
             </Typography>
           </Toolbar>
         </AppBar>
-        <Grid container spacing={0}>
+        <Grid container>
           <Grid item xs={3}>
             <div className={classes.container}>
               <TextField
                 fullWidth
-                label="Исполнители"
+                label="Members"
                 value={this.state.names}
                 multiline
-                rows="30"
+                rows="28"
                 margin="normal"
                 variant="outlined"
                 onChange={this.handleChange('names')}
@@ -185,10 +173,10 @@ class App extends Component {
             <div className={classes.container}>
               <TextField
                 fullWidth
-                label="Задачи"
+                label="Tasks"
                 value={this.state.tasks}
                 multiline
-                rows="30"
+                rows="28"
                 margin="normal"
                 variant="outlined"
                 onChange={this.handleChange('tasks')}
@@ -197,45 +185,30 @@ class App extends Component {
           </Grid>
           <Grid item xs={3}>
             <div className={classes.container}>
-              <Button color="primary" className={classes.button} onClick={this.handleDistribute}>
-                Распределить
+              <Button color="primary" className={classes.button} onClick={this.handleDistribute} variant="outlined">
+                Distribute
               </Button>
-              <Button className={classes.button} onClick={this.handleShuffle('names')}>
-                Перемешать имена
+              <Button className={classes.button} onClick={this.handleShuffle('names')} variant="outlined">
+                Shuffle members
               </Button>
-              <Button className={classes.button} onClick={this.handleShuffle('tasks')}>
-                Перемешать задания
+              <Button className={classes.button} onClick={this.handleShuffle('tasks')} variant="outlined">
+                Shuffle tasks
               </Button>
             </div>
           </Grid>
           <Grid item xs={3}>
-            <FormControl component="fieldset" className={classes.formControl}>
-              <FormLabel component="legend">Опции:</FormLabel>
-              <FormGroup>
-                {checkboxNames.map((name, id) => (
-                  <FormControlLabel key={id}
-                    control={
-                      <Checkbox checked={checkboxes[name].value} onChange={this.handleCheck(name)} value={name} color="primary" />
-                    }
-                    label={checkboxes[name].label}
-                  />
-                ))}
-              </FormGroup>
-            </FormControl>
-          </Grid>
-          <Grid item xs={3}>
             <div className={classes.container}>
               <FormControl component="fieldset">
-                <FormLabel component="legend">Распределение</FormLabel>
+                <FormLabel component="legend">Distribution type</FormLabel>
                 <RadioGroup
                   aria-label="DistributionType"
                   name="distributionType"
                   value={this.state.distributionType}
                   onChange={this.handleChange('distributionType')}
                 >
-                  <FormControlLabel value="random" control={<Radio color="primary"/>} label="Случайное" />
-                  <FormControlLabel value="sequential" control={<Radio color="primary"/>} label="Последовательное" />
-                  <FormControlLabel value="weight" control={<Radio color="primary"/>} label="Весовое" disabled/>
+                  <FormControlLabel value="random" control={<Radio color="primary"/>} label="Random" />
+                  <FormControlLabel value="sequential" control={<Radio color="primary"/>} label="Sequential" />
+                  <FormControlLabel value="weight" control={<Radio color="primary"/>} label="Weight" disabled/>
                 </RadioGroup>
               </FormControl>
             </div>
@@ -243,27 +216,46 @@ class App extends Component {
           <Grid item xs={3}>
             <div className={classes.container}>
               <FormControl component="fieldset">
-                <FormLabel component="legend">Параметры</FormLabel>
-                Нет параметров
+                <FormLabel component="legend">Parameters</FormLabel>
+                <Typography variant="body1" style={{ padding: 12, paddingLeft: 0 }}>
+                  No parameters
+                </Typography>
+              </FormControl>
+            </div>
+          </Grid>
+          <Grid item xs={3}>
+            <div className={classes.container}>
+              <FormControl component="fieldset" className={classes.formControl}>
+                <FormLabel component="legend">Options:</FormLabel>
+                <FormGroup>
+                  {checkboxNames.map((name, id) => (
+                    <FormControlLabel key={id}
+                      control={
+                        <Checkbox checked={checkboxes[name].value} onChange={this.handleCheck(name)} value={name} color="primary" />
+                      }
+                      label={checkboxes[name].label}
+                    />
+                  ))}
+                </FormGroup>
               </FormControl>
             </div>
           </Grid>
           {error &&<Grid item xs={12}>
             <div className={classes.container}>
               <Typography variant="h6" color="inherit">
-                Ошибка
+                Error
               </Typography>
             </div>
           </Grid>}
           {results && <Grid item xs={12}>
             <div className={classes.container}>
-              <Typography variant="h6" color="inherit">Кратко</Typography>
+              <Typography variant="h6" color="inherit">Short</Typography>
               <Table className={classes.table}>
                 <TableHead>
                   <TableRow>
-                    <TableCell>Исполнитель</TableCell>
-                    <TableCell>Задания</TableCell>
-                    <TableCell>Количество</TableCell>
+                    <TableCell>Member</TableCell>
+                    <TableCell>Tasks</TableCell>
+                    <TableCell>Count</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -276,13 +268,13 @@ class App extends Component {
                   ))}
                 </TableBody>
               </Table>
-              <Typography variant="h6" color="inherit">Подробно</Typography>
+              <Typography variant="h6" color="inherit" style={{ marginTop: 20 }}>Details</Typography>
               <Table className={classes.table}>
                 <TableHead>
                   <TableRow>
-                    {addNumbers && <TableCell>Номер</TableCell>}
-                    <TableCell>Задание</TableCell>
-                    <TableCell>Исполнитель</TableCell>
+                    {addNumbers && <TableCell>Number</TableCell>}
+                    <TableCell>Task</TableCell>
+                    <TableCell>Member</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
