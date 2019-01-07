@@ -4,26 +4,17 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
 import FormLabel from '@material-ui/core/FormLabel';
 import FormControl from '@material-ui/core/FormControl';
-import FormGroup from '@material-ui/core/FormGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-import Radio from '@material-ui/core/Radio';
-import RadioGroup from '@material-ui/core/RadioGroup';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
+
+import Button from './button';
+import Textarea from './textarea';
+import RadioGroup from './radioGroup';
+import CheckboxGroup from './checkboxGroup';
+import ShortTable from './shortTable';
+import DetailTable from './detailTable';
 
 const styles = {
-  button: {
-    width: '100%',
-    marginBottom: 10,
-  },
   container: {
     padding: 20,
   }
@@ -91,6 +82,21 @@ class App extends Component {
         value: true,
       },
     },
+    distributionTypes: [
+      {
+        label: 'Random',
+        value: 'random'
+      },
+      {
+        label: 'Sequential',
+        value: 'sequential'
+      },
+      {
+        label: 'Weight',
+        value: 'weight',
+        disabled: true
+      }
+    ],
     names: '',
     tasks: '',
     distributionType: 'random',
@@ -107,7 +113,6 @@ class App extends Component {
   handleCheck = name => (event, value) => {
     this.setState((state, props) => {
       state.checkboxes[name].value = value;
-      console.log(state.checkboxes);
       return state;
     });
   }
@@ -140,10 +145,9 @@ class App extends Component {
   }
 
   render() {
-    let { classes } = this.props,
-      { error, results, checkboxes } = this.state,
-      addNumbers = checkboxes.addNumbers.value,
-      checkboxNames = Object.keys(checkboxes);
+    const { classes } = this.props;
+    const { error, results, checkboxes, distributionTypes } = this.state;
+    const addNumbers = checkboxes.addNumbers.value;
 
     return (
       <div className="App">
@@ -157,41 +161,31 @@ class App extends Component {
         <Grid container>
           <Grid item xs={3}>
             <div className={classes.container}>
-              <TextField
-                fullWidth
+              <Textarea
                 label="Members"
                 value={this.state.names}
-                multiline
-                rows="28"
-                margin="normal"
-                variant="outlined"
                 onChange={this.handleChange('names')}
               />
             </div>
           </Grid>
           <Grid item xs={9}>
             <div className={classes.container}>
-              <TextField
-                fullWidth
+              <Textarea
                 label="Tasks"
                 value={this.state.tasks}
-                multiline
-                rows="28"
-                margin="normal"
-                variant="outlined"
                 onChange={this.handleChange('tasks')}
               />
             </div>
           </Grid>
           <Grid item xs={3}>
             <div className={classes.container}>
-              <Button color="primary" className={classes.button} onClick={this.handleDistribute} variant="outlined">
+              <Button primary onClick={this.handleDistribute}>
                 Distribute
               </Button>
-              <Button className={classes.button} onClick={this.handleShuffle('names')} variant="outlined">
+              <Button onClick={this.handleShuffle('names')}>
                 Shuffle members
               </Button>
-              <Button className={classes.button} onClick={this.handleShuffle('tasks')} variant="outlined">
+              <Button onClick={this.handleShuffle('tasks')}>
                 Shuffle tasks
               </Button>
             </div>
@@ -201,15 +195,12 @@ class App extends Component {
               <FormControl component="fieldset">
                 <FormLabel component="legend">Distribution type</FormLabel>
                 <RadioGroup
-                  aria-label="DistributionType"
+                  label="DistributionType"
                   name="distributionType"
                   value={this.state.distributionType}
                   onChange={this.handleChange('distributionType')}
-                >
-                  <FormControlLabel value="random" control={<Radio color="primary"/>} label="Random" />
-                  <FormControlLabel value="sequential" control={<Radio color="primary"/>} label="Sequential" />
-                  <FormControlLabel value="weight" control={<Radio color="primary"/>} label="Weight" disabled/>
-                </RadioGroup>
+                  items={distributionTypes}
+                />
               </FormControl>
             </div>
           </Grid>
@@ -227,16 +218,10 @@ class App extends Component {
             <div className={classes.container}>
               <FormControl component="fieldset" className={classes.formControl}>
                 <FormLabel component="legend">Options:</FormLabel>
-                <FormGroup>
-                  {checkboxNames.map((name, id) => (
-                    <FormControlLabel key={id}
-                      control={
-                        <Checkbox checked={checkboxes[name].value} onChange={this.handleCheck(name)} value={name} color="primary" />
-                      }
-                      label={checkboxes[name].label}
-                    />
-                  ))}
-                </FormGroup>
+                <CheckboxGroup
+                  items={checkboxes}
+                  onChange={this.handleCheck}
+                />
               </FormControl>
             </div>
           </Grid>
@@ -250,43 +235,15 @@ class App extends Component {
           {results && <Grid item xs={12}>
             <div className={classes.container}>
               <Typography variant="h6" color="inherit">Short</Typography>
-              <Table className={classes.table}>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Member</TableCell>
-                    <TableCell>Tasks</TableCell>
-                    <TableCell>Count</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {results.names.map((name, id) =>(
-                    <TableRow key={id}>
-                      <TableCell component="th" scope="row">{name}</TableCell>
-                      <TableCell>{results.relation[name].join(', ')}</TableCell>
-                      <TableCell>{results.relation[name].length}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+              <ShortTable
+                names={results.names}
+                relation={results.relation}
+              />
               <Typography variant="h6" color="inherit" style={{ marginTop: 20 }}>Details</Typography>
-              <Table className={classes.table}>
-                <TableHead>
-                  <TableRow>
-                    {addNumbers && <TableCell>Number</TableCell>}
-                    <TableCell>Task</TableCell>
-                    <TableCell>Member</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {results.answers.map((answer, id) =>(
-                    <TableRow key={id}>
-                      {addNumbers && <TableCell>{id + 1}</TableCell>}
-                      <TableCell>{answer.task}</TableCell>
-                      <TableCell>{answer.name}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+              <DetailTable
+                addNumbers={addNumbers}
+                answers={results.answers}
+              />
             </div>
           </Grid>}
         </Grid>
